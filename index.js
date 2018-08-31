@@ -21,7 +21,7 @@ let elementsIs = false;
 function addAllDataFromDate(data) {
 	dataNow = data;
 	mouthNow = months[dataNow.getMonth()];
-	quantityDays = ((months.indexOf(mouthNow)-1)%2 === 0) ? 31 : 30;
+	quantityDays = ((months.indexOf(mouthNow)-1)%2 <= 0) ? 31 : 30;
 	createBlockDay(quantityDays);
 }
 
