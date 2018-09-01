@@ -36,6 +36,18 @@ body,html{
     animation: opacity 0.4s;
     user-select: none;
 }
+.block-prev-day{
+    width: 60px;
+    min-width: 60px;
+    height: 40px;
+    background: rgba(0,0,0,0.1);
+    color: rgb(180, 180, 180);
+    margin: 5px;
+    padding: 5px;
+    cursor: pointer;
+    position: relative;
+    user-select: none;
+}
 .block-day:hover{
     background: rgba(0,0,0,0.2);
     transform: scale(1.1)

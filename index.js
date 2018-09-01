@@ -13,37 +13,52 @@ const months = [
 let daysWithTask = [];
 let allDays = [];
 let dataNow;
+let dateDupl;
 let mouthNow;
 let quantityDays;
 let elementsIs = false;
+let quantityDaysFromPrevMonth = 0;
+let oneLoad = true;
 
 
 function addAllDataFromDate(data) {
-	dataNow = data;
+	dataNow = new Date(data);
 	mouthNow = months[dataNow.getMonth()];
-	quantityDays = ((months.indexOf(mouthNow)-1)%2 <= 0) ? 31 : 30;
-	createBlockDay(quantityDays);
+	quantityDays = new Date(data);
+	quantityDays.setDate(31);
+	quantityDays = quantityDays.getDate() === 31 ? 31 : 30;
+	createBlockDay(quantityDays, data);
 }
 
-function createBlockDay(quantityDays) {
+function createDays(i, prev){
+	let blockDay = document.createElement("DIV");
+	let numberDay = document.createTextNode(i);
+	if( prev ) {
+		blockDay.setAttribute("class", "block-prev-day classForDel");
+	} else {
+		blockDay.setAttribute("class", "block-day classForDel");
+	}
+	blockDay.appendChild(numberDay);
+	container.appendChild(blockDay);
+	allDays.push(blockDay);
+}
+
+function createBlockDay(quantityDays, data) {
 	dataMouth.textContent = months[dataNow.getMonth()]+ ", " +dataNow.getFullYear();
 	let arrWithElementsDay = [];
 	if( elementsIs ) {
-		for (var i = 0; i < container.getElementsByClassName('block-day').length; i++) {
-			arrWithElementsDay.push(container.getElementsByClassName('block-day')[i])
+		for (var i = 0; i < container.getElementsByClassName('classForDel').length; i++) {
+			arrWithElementsDay.push(container.getElementsByClassName('classForDel')[i])
 		}
 		arrWithElementsDay.map(a=>{
 			container.removeChild(a)
 		})
 		allDays = [];
 	}
+	dateDupl = data;
+	setDateDay(dateDupl);
 	for (var i = 1; i < quantityDays+1; i++) {
-		let blockDay = document.createElement("DIV");
-		let numberDay = document.createTextNode(i);
-		blockDay.setAttribute("class", "block-day");
-		blockDay.appendChild(numberDay);
-		container.appendChild(blockDay);
-		allDays.push(blockDay);
+		createDays(i, false)
 	}
 	addDayTask(dataUser.quests)
 }
@@ -73,13 +88,37 @@ function addChangeInDay(index, data){
 	let imgClicp = document.createElement('I');
 	imgClicp.setAttribute('class', 'fa fa-thumb-tack');
 	clip.appendChild(imgClicp);
-	allDays[index].appendChild(clip);
-	allDays[index].setAttribute('title', data.quest);
-	allDays[index].addEventListener('click', sentRequest)
+	var indexElement = index + quantityDaysFromPrevMonth;
+	allDays[indexElement].appendChild(clip);
+	allDays[indexElement].setAttribute('title', data.quest);
+	allDays[indexElement].addEventListener('click', sentRequest)
 	daysWithTask.push({
-		day: allDays[index],
+		day: allDays[indexElement],
 		data: data
 	});
+}
+
+function setDateDay(date) {
+	let datePrev = new Date(date);
+	let dateDup = new Date(date);
+	datePrev.setDate(1);
+	let quantityDaysPrevMonth = datePrev.getDay() > 0 ? datePrev.getDay() : 7;
+	if ( quantityDaysPrevMonth > 1 ) {
+		var monthPrev = dateDup.setMonth( dateDup.getMonth()-1 );
+		monthPrev = new Date(monthPrev);
+		var quantDays = monthPrev;
+		quantDays.setDate(31);
+		quantDays = quantDays.getDate() === 31 ? 31 : 30;
+		var arrPrevMonth = [];
+		for (var i = quantDays; i > (quantDays-(quantityDaysPrevMonth-1)); i--) {
+			arrPrevMonth.push(i);
+		};
+		quantityDaysFromPrevMonth = arrPrevMonth.length;
+		arrPrevMonth = arrPrevMonth.reverse();
+		for (var i = 0; i < arrPrevMonth.length; i++) {
+			createDays(arrPrevMonth[i], true);
+		};
+	} else quantityDaysFromPrevMonth = 0;
 }
 
 function sentRequest() {
@@ -104,19 +143,23 @@ function sentRequest() {
 }
 
 var dat = new Date();
+
 function clickNextMonth() {
 	var month = dat.setMonth( dat.getMonth()+1 );
 	elementsIs = true;
-	addAllDataFromDate(new Date(month));
+	dateDupl = month;
+	addAllDataFromDate(month);
 }
 
 function clickPrevMonth() {
 	var month = dat.setMonth( dat.getMonth()-1 );
 	elementsIs = true;
-	addAllDataFromDate(new Date(month));
+	dateDupl = month;
+	addAllDataFromDate(month);
 }
 
 prev.addEventListener('click', clickPrevMonth);
 next.addEventListener('click', clickNextMonth);
 
-addAllDataFromDate(new Date());
+let dateForSent = new Date();
+addAllDataFromDate( dateForSent.setMonth(dateForSent.getMonth()) );
