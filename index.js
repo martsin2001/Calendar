@@ -60,7 +60,8 @@ function createBlockDay(quantityDays, data) {
 	for (var i = 1; i < quantityDays+1; i++) {
 		createDays(i, false)
 	}
-	addDayTask(dataUser.quests)
+	setDayNow(dateDupl);
+	addDayTask(dataUser.quests);
 }
 
 function addDayTask(data) {
@@ -80,6 +81,15 @@ function addDayTask(data) {
 			addChangeInDay(a.getDate()-1, data[arrWithData.indexOf(a)]);
 		}
 	})
+}
+
+function setDayNow(date){
+	let newDate = new Date();
+	let sendDate = new Date(date);
+	if( newDate.getFullYear() === sendDate.getFullYear() && newDate.getMonth() === sendDate.getMonth() ) {
+		let nowDate = new Date(date);
+		allDays[nowDate.getDate()+quantityDaysFromPrevMonth-1].style.color = 'red';
+	}
 }
 
 function addChangeInDay(index, data){
@@ -162,4 +172,4 @@ prev.addEventListener('click', clickPrevMonth);
 next.addEventListener('click', clickNextMonth);
 
 let dateForSent = new Date();
-addAllDataFromDate( dateForSent.setMonth(dateForSent.getMonth()) );
+addAllDataFromDate( dateForSent.setMonth(dateForSent.getMonth()));
